@@ -733,6 +733,7 @@ ihindmarsh = 1
 GIMRT = .TRUE.
 petscon = .TRUE.
 AppendRestart = .FALSE.
+RestartAddMinerals = .FALSE.
 nCSD = 500
 time_scale = 1.0d0
 dist_scale = 1.0d0
@@ -1568,6 +1569,11 @@ IF (found) THEN
     irestart = 1
   END IF
 
+  parchar = 'restart_add_minerals'
+  parfind = ' '
+  RestartAddMinerals = .FALSE.
+  CALL read_logical(nout,lchar,parchar,parfind,RestartAddMinerals)
+
   parchar = 'save_restart'
   parfind = ' '
   RestartOutputFile = ' '
@@ -1770,6 +1776,7 @@ ELSE
   ihindmarsh = 1
   ScreenInterval = 1
   RestartOutputFile = 'crunch.rst'
+  RestartAddMinerals = .FALSE.
   NumInputFiles = 1
   InputFileCounter = 1
   KateMaher = .FALSE.

@@ -74,6 +74,7 @@ MODULE runtime
   LOGICAL(LGT)                                                :: kaleidagraph
   LOGICAL(LGT)                                                :: nview
   LOGICAL(LGT)                                                :: AppendRestart
+  LOGICAL(LGT)                                                :: RestartAddMinerals
   LOGICAL(LGT)                                                :: Cylindrical
   LOGICAL(LGT)                                                :: Rectangular
   LOGICAL(LGT)                                                :: Spherical

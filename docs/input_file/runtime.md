@@ -558,6 +558,19 @@ example, pHn.dat) will be updated as well if this *append* option is
 chose, so spatial profiles written after restart will reflect the files
 written previously before restart.
 
+
+#### Restart_add_minerals
+
+Option to add mineral volume fractions from the new input file on top of a restart state.
+
+Syntax:  **restart_add_minerals** *logical*
+
+*logical* is a standard FORTRAN logical (true or false).
+
+<u> Default </u>: false
+
+Explanation:  When **restart_add_minerals** is true and a **restart** file is used, CrunchTope first reads the full depth-resolved mineral volume fractions from the restart file, then adds the mineral volume fractions defined by each grid cell's geochemical condition in the current input file. This allows users to preserve the previous simulation end-state while incrementing minerals for the new run. If false, restart behavior is unchanged and mineral volume fractions are taken only from the restart file.
+
 #### Save_restart
 
 Option to save a restart file.
