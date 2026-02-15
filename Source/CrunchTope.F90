@@ -996,6 +996,20 @@ IF (irestart == 1) THEN
                delt,dtold,tstep,deltmin,dtmaxcour,dtmax,userC,userD,userP,user,     &
                amatpetsc,amatD,amatP,bvec,xvec,bvecD,xvecD,bvecP,xvecP)
 
+  IF (RestartAddMinerals) THEN
+    WRITE(*,*) ' Applying restart_add_minerals option: adding input mineral volumes to restart state'
+    DO jz = 1,nz
+      DO jy = 1,ny
+        DO jx = 1,nx
+          DO k = 1,nrct
+            volfx(k,jx,jy,jz) = volfx(k,jx,jy,jz) + volin(k,jinit(jx,jy,jz))
+            VolumeLastTimeStep(k,jx,jy,jz) = volfx(k,jx,jy,jz)
+          END DO
+        END DO
+      END DO
+    END DO
+  END IF
+
 END IF
 
 
