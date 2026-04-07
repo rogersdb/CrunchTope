@@ -503,6 +503,7 @@ INTEGER(I4B)                                                  :: id
 INTEGER(I4B)                                                  :: nisotope_max
 INTEGER(I4B)                                                  :: nmindecay_max
 INTEGER(I4B)                                                  :: kd
+INTEGER(I4B)                                                  :: nlink
 INTEGER(I4B)                                                  :: ndim1
 INTEGER(I4B)                                                  :: ndim2
 INTEGER(I4B)                                                  :: ndim3
@@ -2506,6 +2507,7 @@ END IF
 
 surfcharge_init = 0.0
 LogPotential_tmp = 0.0
+nptPrimary = 0
 
 DO is = 1,nsurf
   
@@ -2521,12 +2523,29 @@ END DO
 
 !  Link the various secondary surface complexes to a primary surface hydroxyl site
 
+islink = 0
+
 DO ns = 1,nsurf_sec
+  nlink = 0
   DO is = 1,nsurf
     IF (musurf(ns,is+ncomp) /= 0.0) THEN
       islink(ns) = is
+      nlink = nlink + 1
     END IF
   END DO
+  IF (nlink == 0) THEN
+    WRITE(*,*)
+    WRITE(*,*) ' Secondary surface complex does not link to any primary surface site'
+    WRITE(*,*) ' Secondary surface complex: ', namsurf_sec(ns)
+    WRITE(*,*)
+    STOP
+  ELSE IF (nlink > 1) THEN
+    WRITE(*,*)
+    WRITE(*,*) ' Secondary surface complex links to more than one primary surface site'
+    WRITE(*,*) ' Secondary surface complex: ', namsurf_sec(ns)
+    WRITE(*,*)
+    STOP
+  END IF
 END DO
 
 nptlink = 0
@@ -2534,6 +2553,15 @@ nptlink = 0
 DO ns = 1,nsurf_sec
   is = islink(ns)
   nptlink(ns) = nptPrimary(is)
+  IF (nptlink(ns) < 0 .OR. nptlink(ns) > npot) THEN
+    WRITE(*,*)
+    WRITE(*,*) ' Invalid electrostatic potential link for secondary surface complex'
+    WRITE(*,*) ' Secondary surface complex: ', namsurf_sec(ns)
+    WRITE(*,*) ' Linked primary index: ', is
+    WRITE(*,*) ' nptlink(ns) = ', nptlink(ns), ' ; npot = ', npot
+    WRITE(*,*)
+    STOP
+  END IF
   write(*,555) namsurf_sec(ns),nptlink(ns)
 END DO
 
@@ -3360,8 +3388,8 @@ DO nco = 1,nchem
 
   CALL species_init(ncomp,nspec)
   CALL gases_init(ncomp,ngas,tempc,nco)
-  CALL surf_init(ncomp,nspec,nsurf,nsurf_sec,nchem)
-  CALL exchange_init(ncomp,nspec,nexchange,nexch_sec,nchem)
+  CALL surf_init(ncomp,nspec,nsurf,nsurf_sec,nco)
+  CALL exchange_init(ncomp,nspec,nexchange,nexch_sec,nco)
   CALL totconc_init(ncomp,nspec,nexchange,nexch_sec,nsurf,nsurf_sec,nco)
   CALL totgas_init(ncomp,nspec,ngas)
   CALL totsurf_init(ncomp,nsurf,nsurf_sec)
@@ -10107,4 +10135,3 @@ STOP
 
   END SUBROUTINE StartTope
   
-
