@@ -540,7 +540,7 @@ IF (nsurf>0) THEN
   OPEN(UNIT=8,FILE=fnv, ACCESS='sequential',STATUS='unknown')
   WRITE(8,104)
   WRITE(8,*) 'TITLE = "',char_time(1:ls),' Years"'
-  WRITE(8,1009) ( namsurf(is),is=1,nsurf ),(namsurf_sec(ns),ns=1,nsurf_sec)
+  WRITE(8,1009) ( prtsurf(ns),ns=1,nsurf+nsurf_sec )
     WRITE(8,*) 'ZONE F=POINT,I=', nx,  ', J=',ny
   DO jz = 1,nz
     DO jy = 1,ny
@@ -1147,7 +1147,7 @@ IF (nsurf > 0) THEN
   OPEN(UNIT=8,FILE=fnv, ACCESS='sequential',STATUS='unknown')
   WRITE(8,104)
   WRITE(8,*) 'TITLE = "',char_time(1:ls),' Years"'
-  WRITE(8,2009) ( namsurf(is),is=1,nsurf ),(namsurf_sec(ns),ns=1,nsurf_sec)
+  WRITE(8,2009) ( prtsurf(ns),ns=1,nsurf+nsurf_sec )
     WRITE(8,*) 'ZONE F=POINT,I=', nx,  ', J=',nz
   DO jz = 1,nz
     DO jy = 1,ny
@@ -1583,7 +1583,7 @@ IF (nsurf > 0) THEN
   OPEN(UNIT=8,FILE=fnv, ACCESS='sequential',STATUS='unknown')
   WRITE(8,104)
   WRITE(8,*) 'TITLE = "',char_time(1:ls),' Years"'
-  WRITE(8,2001) ( namsurf(is),is=1,nsurf ),(namsurf_sec(ns),ns=1,nsurf_sec)
+  WRITE(8,2001) ( prtsurf(ns),ns=1,nsurf+nsurf_sec )
   WRITE(8,*) 'ZONE F=POINT,I=', nx
   DO jz = 1,nz
     DO jy = 1,ny
@@ -1847,13 +1847,13 @@ IF (nrct > 0) THEN
   CLOSE(UNIT=8,STATUS='keep')
 END IF
 
-185 FORMAT(1PE12.5,12x,100(1X,1PE16.8))
+185 FORMAT(1PE12.5,12x,500(1X,1PE16.8))
 
 END IF
 
-1009 FORMAT('VARIABLES = " X (meters) ", "  Y (meters)  "',100(', "',A13,'"') )
-2009 FORMAT('VARIABLES = " X (meters) ", "  Z (meters)  "',100(', "',A13,'"'))
-2001 FORMAT('VARIABLES = "X (meters) "',                   100(', "',A13,'"'))
+1009 FORMAT('VARIABLES = " X (meters) ", "  Y (meters)  "',500(', "',A16,'"') )
+2009 FORMAT('VARIABLES = " X (meters) ", "  Z (meters)  "',500(', "',A16,'"'))
+2001 FORMAT('VARIABLES = "X (meters) "',                   500(', "',A16,'"'))
 
 1012 FORMAT('VARIABLES = " X (meters)", " Y (meters)", "X Velocity", "Y Velocity"')
 2012 FORMAT('VARIABLES = " X (meters)", " Z (meters)", "X Velocity", "Z Velocity"')
@@ -1866,7 +1866,7 @@ END IF
 
 182 FORMAT(100(1X,1PE12.4))
 183 FORMAT(1PE12.4,2X,1PE12.4,2X,1PE12.4)
-184 FORMAT(100(1X,1PE16.8))
+184 FORMAT(500(1X,1PE16.8))
 191 FORMAT(100(1X,1PE17.7))
 188 FORMAT(100(1X,f15.7))
 

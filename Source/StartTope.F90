@@ -2507,6 +2507,7 @@ END IF
 
 surfcharge_init = 0.0
 LogPotential_tmp = 0.0
+nptPrimary = 0
 
 DO is = 1,nsurf
   
@@ -2552,6 +2553,15 @@ nptlink = 0
 DO ns = 1,nsurf_sec
   is = islink(ns)
   nptlink(ns) = nptPrimary(is)
+  IF (nptlink(ns) < 0 .OR. nptlink(ns) > npot) THEN
+    WRITE(*,*)
+    WRITE(*,*) ' Invalid electrostatic potential link for secondary surface complex'
+    WRITE(*,*) ' Secondary surface complex: ', namsurf_sec(ns)
+    WRITE(*,*) ' Linked primary index: ', is
+    WRITE(*,*) ' nptlink(ns) = ', nptlink(ns), ' ; npot = ', npot
+    WRITE(*,*)
+    STOP
+  END IF
   write(*,555) namsurf_sec(ns),nptlink(ns)
 END DO
 

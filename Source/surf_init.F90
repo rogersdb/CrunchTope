@@ -70,6 +70,13 @@ REAL(DP)                                                    :: activity
 REAL(DP)                                                    :: LogTotalSites
 REAL(DP)                                                    :: LogTotalEquivalents
 REAL(DP)                                                    :: LogDependence
+REAL(DP)                                                    :: PrimaryStoich
+
+! NOTE:
+! Primary (basis) surface species concentrations are initialized by the caller
+! (e.g., StartTope sets spsurftmp10(1:nsurf) from guess_surf/c_surf before
+! calling this routine).  This routine computes the secondary surface species
+! (indices nsurf+1 : nsurf+nsurf_sec) from mass-action relationships.
 
 ! NOTE:
 ! Primary (basis) surface species concentrations are initialized by the caller
@@ -99,10 +106,19 @@ DO ns = 1,nsurf_sec
       sum = sum + musurf(ns,is+ncomp)*activity
     END DO
 
-    spsurftmp(ns+nsurf) = keqsurf_tmp(ns) + sum                                     &
-        - 2.0d0*musurf(ns,islink(ns)+ncomp)*delta_z*LogPotential_tmp(nptlink(ns))   &
-        - (musurf(ns,islink(ns)+ncomp)-1.0d0) * LogTotalSites                       &
-        - DLOG(musurf(ns,islink(ns)+ncomp)) 
+    PrimaryStoich = musurf(ns,islink(ns)+ncomp)
+    IF (PrimaryStoich <= 0.0d0) THEN
+      WRITE(*,*)
+      WRITE(*,*) ' Invalid non-positive stoichiometric coefficient for linked primary surface site'
+      WRITE(*,*) ' Secondary index: ', ns, '  Primary index: ', islink(ns)
+      WRITE(*,*)
+      STOP
+    END IF
+
+    spsurftmp(ns+nsurf) = keqsurf_tmp(ns) + sum                        &
+        - 2.0d0*PrimaryStoich*delta_z*LogPotential_tmp(nptlink(ns))    &
+        - (PrimaryStoich-1.0d0) * LogTotalSites                        &
+        - DLOG(PrimaryStoich)
 
     spsurftmp10(ns+nsurf) = DEXP(spsurftmp(ns+nsurf))
 
@@ -124,9 +140,18 @@ DO ns = 1,nsurf_sec
       sum = sum + musurf(ns,is+ncomp)*activity
     END DO
     
-    spsurftmp(ns+nsurf) = keqsurf_tmp(ns) + sum                               &
-        - (musurf(ns,islink(ns)+ncomp)-1.0d0)*LogTotalSites                   &
-        - DLOG(musurf(ns,islink(ns)+ncomp)) 
+    PrimaryStoich = musurf(ns,islink(ns)+ncomp)
+    IF (PrimaryStoich <= 0.0d0) THEN
+      WRITE(*,*)
+      WRITE(*,*) ' Invalid non-positive stoichiometric coefficient for linked primary surface site'
+      WRITE(*,*) ' Secondary index: ', ns, '  Primary index: ', islink(ns)
+      WRITE(*,*)
+      STOP
+    END IF
+
+    spsurftmp(ns+nsurf) = keqsurf_tmp(ns) + sum                     &
+        - (PrimaryStoich-1.0d0)*LogTotalSites                       &
+        - DLOG(PrimaryStoich)
     
     spsurftmp10(ns+nsurf) = DEXP(spsurftmp(ns+nsurf))
     
