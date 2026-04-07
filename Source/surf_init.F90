@@ -71,6 +71,12 @@ REAL(DP)                                                    :: LogTotalSites
 REAL(DP)                                                    :: LogTotalEquivalents
 REAL(DP)                                                    :: LogDependence
 
+! NOTE:
+! Primary (basis) surface species concentrations are initialized by the caller
+! (e.g., StartTope sets spsurftmp10(1:nsurf) from guess_surf/c_surf before
+! calling this routine).  This routine computes the secondary surface species
+! (indices nsurf+1 : nsurf+nsurf_sec) from mass-action relationships.
+
 DO ns = 1,nsurf_sec
 
   IF (nptlink(ns) /= 0) THEN
